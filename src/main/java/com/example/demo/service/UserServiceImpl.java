@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.DataResponseUser;
+import com.example.demo.dto.DataUser;
 import com.example.demo.dto.ListUsers;
 import com.example.demo.dto.UpdateUser;
 import com.example.demo.model.UserModel;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements IUserService{
@@ -22,10 +24,16 @@ public class UserServiceImpl implements IUserService{
     private UserRepository repository;
 
     @Override
-    public ResponseEntity<UserModel> createUser(UserModel userModel, UriComponentsBuilder uriComponentsBuilder) {
-        UserModel user =  repository.save(userModel);
+    public ResponseEntity<DataResponseUser> createUser(@Valid UserModel user, UriComponentsBuilder uriComponentsBuilder) {
+        UserModel userSaved =  repository.save(user);
+        DataResponseUser responseUser = new DataResponseUser(
+                user.getNombre(),
+                user.getApellido()
+        );
+
         URI url = uriComponentsBuilder.path("/api/users/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(url).body(user);
+
+        return ResponseEntity.created(url).body(responseUser);
     }
 
     @Override
@@ -43,25 +51,21 @@ public class UserServiceImpl implements IUserService{
     public ResponseEntity<?> updateUser(@Valid  UpdateUser updateUser) {
         UserModel user = repository.findById(updateUser.id()).orElseThrow(() -> new EntityNotFoundException("El usuario con el "+ updateUser.id()+" no existe"));
 
-        if (updateUser.nombre() != null) {
+        if (!Objects.equals(updateUser.nombre(), user.getNombre())) {
             user.setNombre(updateUser.nombre());
         }
-        if (updateUser.apellido() != null) {
+        if (!Objects.equals(updateUser.apellido(), user.getApellido())) {
             user.setApellido(updateUser.apellido());
         }
-        if (updateUser.email() != null) {
+        if (!Objects.equals(updateUser.email(), user.getEmail())) {
             user.setEmail(updateUser.email());
         }
-        if (updateUser.telefono() != null) {
+        if (!Objects.equals(updateUser.telefono(), user.getTelefono())) {
             user.setTelefono(updateUser.telefono());
         }
-
         repository.save(user);
 
-        return ResponseEntity.ok(new DataResponseUser(
-                user.getNombre(),
-                user.getApellido()
-        ));
+        return ResponseEntity.ok(new DataResponseUser(user.getNombre(), user.getApellido()));
     }
 
     @Override

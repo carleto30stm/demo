@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.DataResponseUser;
+import com.example.demo.dto.DataUser;
 import com.example.demo.dto.UpdateUser;
 import com.example.demo.model.UserModel;
 import com.example.demo.dto.ListUsers;
@@ -22,8 +23,10 @@ public class UserControllers {
     private UserServiceImpl service;
 
     @PostMapping
-    public ResponseEntity<UserModel> createNewUser(@RequestBody UserModel userModel, UriComponentsBuilder uriComponentsBuilder){
-        ResponseEntity<UserModel> responseEntity = service.createUser(userModel, uriComponentsBuilder);
+    public ResponseEntity<DataResponseUser> createNewUser(@RequestBody DataUser user, UriComponentsBuilder uriComponentsBuilder){
+
+        ResponseEntity<DataResponseUser> responseEntity = service.createUser(new UserModel(user), uriComponentsBuilder);
+
         if (responseEntity.getStatusCode() == HttpStatus.CREATED){
             return responseEntity;
         }
@@ -31,6 +34,7 @@ public class UserControllers {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @GetMapping
     public ResponseEntity <Page<ListUsers>> getUsers(Pageable pageable){
         return ResponseEntity.ok(service.getUsers(pageable));

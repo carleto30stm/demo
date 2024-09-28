@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public interface IUserService {
-    ResponseEntity<UserModel> createUser(UserModel userModel, UriComponentsBuilder uriComponentsBuilder);
+    ResponseEntity<DataResponseUser> createUser(UserModel userModel, UriComponentsBuilder uriComponentsBuilder);
 
     Page<ListUsers> getUsers(Pageable pageable);
 

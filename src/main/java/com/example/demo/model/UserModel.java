@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import com.example.demo.dto.UpdateUser;
+import com.example.demo.dto.DataUser;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class UserModel {
     private Long telefono;
     private Boolean active;
 
-    public UserModel(){
+    public UserModel(DataUser user){
     this.active = true;
     }
 
